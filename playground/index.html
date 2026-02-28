@@ -299,9 +299,11 @@
       <div class="tagline">A programming language for everyone</div>
       <div class="header-right">
         <span class="badge">v1.0</span>
-        <button class="btn-clear" id="btnDownload" style="margin-left:8px;">⬇️ Save</button>
+        <button class="btn-clear" id="btnNew" style="margin-left:8px;">📄 New</button>
+        <button class="btn-clear" id="btnDownload">⬇️ Save</button>
         <button class="btn-clear" id="btnClear">✕ Clear</button>
         <button class="btn-run" id="btnRun">
+
 
           ▶ Run &nbsp;<kbd
             style="background: #1a7a49; border-color: #2ab36b; color: #fff"
@@ -992,8 +994,11 @@ bloom "Hello, World! 🌍"'
           });
           G.set("random", ([a, b]) => {
             if (a === undefined) return Math.random();
-            return Math.floor(Math.random() * (b - a + 1)) + a;
+            const nA = Number(a), nB = Number(b);
+            if (isNaN(nA) || isNaN(nB)) throw new SproutError("🌿 'random' needs numbers.");
+            return Math.floor(Math.random() * (nB - nA + 1)) + nA;
           });
+
           G.set("round", ([n, p = 0]) => {
             const f = Math.pow(10, p);
             return Math.round(n * f) / f;
@@ -1110,10 +1115,11 @@ bloom "Hello, World! 🌍"'
             case "WhilstStmt": {
               let guard = 0;
               while (truthy(this.eval(node.condition, env))) {
-                if (++guard > 100000)
+                if (++guard > 10000)
                   throw new SproutError(
                     "🌿 Loop ran too many times — did you forget to update a variable?",
                   );
+
                 try {
                   this.execBlock(node.body, new Env(env));
                 } catch (e) {
@@ -1175,11 +1181,12 @@ bloom "Hello, World! 🌍"'
             case "ListLiteral":
               return node.elements.map((e) => this.eval(e, env));
             case "IndexExpr": {
-              const obj = this.eval(node.obj, env),
-                idx = this.eval(node.index, env);
+              const obj = this.eval(node.obj, env);
+              let idx = this.eval(node.index, env);
               if (typeof obj === "string") {
                 if (typeof idx !== "number")
                   throw new SproutError("🌿 The index must be a number.", node.line);
+                idx = Math.floor(idx);
                 if (idx < 0 || idx >= obj.length)
                   throw new SproutError(`🌿 Index ${idx} is out of range. The string has ${obj.length} character(s).`, node.line);
                 return obj[idx];
@@ -1194,12 +1201,14 @@ bloom "Hello, World! 🌍"'
                   "🌿 The index inside [...] must be a number.",
                   node.line,
                 );
+              idx = Math.floor(idx);
               if (idx < 0 || idx >= obj.length)
                 throw new SproutError(
                   `🌿 Index ${idx} is out of range. List has ${obj.length} item(s).`,
                   node.line,
                 );
               return obj[idx];
+
             }
 
             case "BinOp":
@@ -1310,6 +1319,8 @@ bloom "Hello, World! 🌍"'
       const btnRun = document.getElementById("btnRun");
       const btnClear = document.getElementById("btnClear");
       const btnDownload = document.getElementById("btnDownload");
+      const btnNew = document.getElementById("btnNew");
+
 
 
       function runCode() {
@@ -1347,7 +1358,16 @@ bloom "Hello, World! 🌍"'
         output.innerHTML =
           '<span class="output-empty">Output will appear here when you press Run ▶</span>';
       });
+      btnNew.addEventListener("click", () => {
+        if(editor.value.trim() !== "" && !confirm("Are you sure you want to start a new file? This will clear your current code.")) {
+            return;
+        }
+        editor.value = "";
+        output.innerHTML = '<span class="output-empty">Output will appear here when you press Run ▶</span>';
+        editor.focus();
+      });
       btnDownload.addEventListener("click", () => {
+
         const text = editor.value;
         const blob = new Blob([text], { type: "text/plain" });
         const a = document.createElement("a");
