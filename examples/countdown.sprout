@@ -1,0 +1,24 @@
+~ ───────────────────────────────────────────────────
+~ countdown.sprout  —  Countdown to blast off! 🚀
+~ ───────────────────────────────────────────────────
+
+bloom "🚀 Rocket Launch Countdown!"
+bloom ""
+
+grow count as 10
+
+whilst count > 0 {
+    bloom count + "..."
+    count = count - 1
+}
+
+bloom "🔥 BLAST OFF! 🚀🌟"
+bloom ""
+
+~ Bonus: list of planets
+grow planets as ["Mercury", "Venus", "Earth", "Mars", "Jupiter"]
+
+bloom "Planets you might visit:"
+each planet in planets {
+    bloom "  🪐 " + planet
+}

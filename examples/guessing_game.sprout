@@ -1,0 +1,30 @@
+~ ───────────────────────────────────────────────────
+~ guessing_game.sprout  —  Guess the secret number!
+~ ───────────────────────────────────────────────────
+
+bloom "🎲 Welcome to the Number Guessing Game!"
+bloom "I'm thinking of a number between 1 and 20..."
+bloom ""
+
+grow secret as random(1, 20)
+grow tries as 0
+grow won as false
+
+whilst not won {
+    harvest guess with "Your guess: "
+    tries = tries + 1
+
+    when guess < secret {
+        bloom "📉 Too low! Try higher."
+    }
+    when guess > secret {
+        bloom "📈 Too high! Try lower."
+    }
+    when guess == secret {
+        won = true
+    }
+}
+
+bloom ""
+bloom "🎉 You got it! The number was " + secret + "."
+bloom "It took you " + tries + " guess(es). Well done!"

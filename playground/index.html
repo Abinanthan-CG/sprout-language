@@ -1,0 +1,1550 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Sprout Playground 🌱 — Code Like a Garden</title>
+    <style>
+      /* ── reset & fonts ─────────────────────────────────────────────────────── */
+      @import url("https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap");
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+      :root {
+        --bg: #0e1117;
+        --bg2: #161b27;
+        --bg3: #1e2535;
+        --green: #3ddc84;
+        --green2: #2ab36b;
+        --green3: #1a7a49;
+        --yellow: #f9c74f;
+        --red: #f45b69;
+        --blue: #4cc9f0;
+        --purple: #b5179e;
+        --text: #e8eaf0;
+        --muted: #8892a8;
+        --border: #2a3045;
+        --radius: 14px;
+      }
+      body {
+        font-family: "Outfit", sans-serif;
+        background: var(--bg);
+        color: var(--text);
+        height: 100vh;
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+      }
+
+      /* ── header ──────────────────────────────────────────────────────────────── */
+      header {
+        background: linear-gradient(
+          135deg,
+          #0d2b1e 0%,
+          #0a1628 60%,
+          #1a0d2b 100%
+        );
+        border-bottom: 1px solid var(--border);
+        padding: 10px 20px;
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        flex-shrink: 0;
+      }
+      .logo {
+        font-size: 1.4rem;
+        font-weight: 800;
+        background: linear-gradient(90deg, var(--green), var(--blue));
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        letter-spacing: -0.5px;
+      }
+      .tagline {
+        color: var(--muted);
+        font-size: 0.85rem;
+      }
+      .header-right {
+        margin-left: auto;
+        display: flex;
+        gap: 8px;
+        align-items: center;
+      }
+      .badge {
+        background: var(--green3);
+        color: var(--green);
+        border: 1px solid var(--green2);
+        font-size: 0.72rem;
+        font-weight: 600;
+        padding: 3px 10px;
+        border-radius: 20px;
+        letter-spacing: 0.5px;
+      }
+
+      /* ── btn ─────────────────────────────────────────────────────────────────── */
+      button {
+        font-family: inherit;
+        border: none;
+        cursor: pointer;
+        transition: all 0.18s;
+      }
+      .btn-run {
+        background: linear-gradient(135deg, var(--green), var(--green2));
+        color: #001a0e;
+        font-weight: 700;
+        font-size: 0.9rem;
+        padding: 8px 22px;
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+      }
+      .btn-run:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 6px 20px rgba(61, 220, 132, 0.35);
+      }
+      .btn-run:active {
+        transform: translateY(0);
+      }
+      .btn-clear {
+        background: var(--bg3);
+        color: var(--muted);
+        border: 1px solid var(--border);
+        padding: 8px 14px;
+        border-radius: 8px;
+        font-size: 0.85rem;
+      }
+      .btn-clear:hover {
+        color: var(--text);
+        border-color: var(--muted);
+      }
+
+      /* ── main layout ─────────────────────────────────────────────────────────── */
+      .main {
+        flex: 1;
+        display: flex;
+        overflow: hidden;
+      }
+
+      /* ── sidebar ─────────────────────────────────────────────────────────────── */
+      .sidebar {
+        width: 220px;
+        background: var(--bg2);
+        border-right: 1px solid var(--border);
+        display: flex;
+        flex-direction: column;
+        flex-shrink: 0;
+        overflow-y: auto;
+      }
+      .sidebar-title {
+        padding: 12px 16px;
+        font-size: 0.72rem;
+        font-weight: 700;
+        color: var(--muted);
+        letter-spacing: 1px;
+        text-transform: uppercase;
+        border-bottom: 1px solid var(--border);
+      }
+      .example-btn {
+        display: block;
+        width: 100%;
+        text-align: left;
+        background: none;
+        padding: 10px 16px;
+        color: var(--text);
+        font-size: 0.85rem;
+        border-bottom: 1px solid var(--border);
+        border-radius: 0;
+        position: relative;
+      }
+      .example-btn:hover {
+        background: var(--bg3);
+        color: var(--green);
+      }
+      .example-btn .ex-icon {
+        margin-right: 8px;
+      }
+      .example-btn .ex-desc {
+        display: block;
+        color: var(--muted);
+        font-size: 0.72rem;
+        margin-top: 2px;
+      }
+
+      /* ── editor area ─────────────────────────────────────────────────────────── */
+      .editor-pane {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+        position: relative;
+      }
+      .pane-header {
+        padding: 8px 16px;
+        background: var(--bg2);
+        border-bottom: 1px solid var(--border);
+        font-size: 0.78rem;
+        color: var(--muted);
+        font-weight: 600;
+        letter-spacing: 0.5px;
+        text-transform: uppercase;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+      .pane-header .dot {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+      }
+      .editor-wrap {
+        flex: 1;
+        position: relative;
+        overflow: hidden;
+      }
+      #editor {
+        width: 100%;
+        height: 100%;
+        background: var(--bg);
+        color: var(--text);
+        font-family: "JetBrains Mono", monospace;
+        font-size: 0.9rem;
+        line-height: 1.65;
+        border: none;
+        outline: none;
+        resize: none;
+        padding: 20px;
+        tab-size: 2;
+        caret-color: var(--green);
+      }
+      /* line highlight on focus */
+      #editor:focus {
+        background: #0c1019;
+      }
+
+      /* ── output pane ─────────────────────────────────────────────────────────── */
+      .output-pane {
+        width: 42%;
+        border-left: 1px solid var(--border);
+        display: flex;
+        flex-direction: column;
+        background: var(--bg);
+      }
+      #output {
+        flex: 1;
+        overflow-y: auto;
+        padding: 16px;
+        font-family: "JetBrains Mono", monospace;
+        font-size: 0.85rem;
+        line-height: 1.7;
+        white-space: pre-wrap;
+        word-break: break-word;
+      }
+      .out-line {
+        animation: fadeIn 0.12s ease;
+      }
+      .out-line.err {
+        color: var(--red);
+      }
+      .out-line.sys {
+        color: var(--muted);
+        font-style: italic;
+      }
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+          transform: translateX(-4px);
+        }
+        to {
+          opacity: 1;
+          transform: none;
+        }
+      }
+      .output-empty {
+        color: var(--muted);
+        font-style: italic;
+        font-size: 0.82rem;
+        padding: 8px 0;
+      }
+
+      /* ── keyboard hint bar ───────────────────────────────────────────────────── */
+      .kbd-bar {
+        padding: 6px 16px;
+        background: var(--bg2);
+        border-top: 1px solid var(--border);
+        font-size: 0.72rem;
+        color: var(--muted);
+        display: flex;
+        gap: 16px;
+        flex-shrink: 0;
+      }
+      kbd {
+        background: var(--bg3);
+        border: 1px solid var(--border);
+        border-radius: 4px;
+        padding: 1px 6px;
+        font-family: "JetBrains Mono", monospace;
+        font-size: 0.7rem;
+        color: var(--text);
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <div class="logo">🌱 Sprout</div>
+      <div class="tagline">A programming language for everyone</div>
+      <div class="header-right">
+        <span class="badge">v1.0</span>
+        <button class="btn-clear" id="btnDownload" style="margin-left:8px;">⬇️ Save</button>
+        <button class="btn-clear" id="btnClear">✕ Clear</button>
+        <button class="btn-run" id="btnRun">
+
+          ▶ Run &nbsp;<kbd
+            style="background: #1a7a49; border-color: #2ab36b; color: #fff"
+            >Ctrl+↵</kbd
+          >
+        </button>
+      </div>
+    </header>
+
+    <div class="main">
+      <!-- sidebar -->
+      <nav class="sidebar">
+        <div class="sidebar-title">📂 Examples</div>
+        <button class="example-btn" data-ex="hello">
+          <span class="ex-icon">👋</span>Hello World
+          <span class="ex-desc">Your first Sprout program</span>
+        </button>
+        <button class="example-btn" data-ex="variables">
+          <span class="ex-icon">📦</span>Variables
+          <span class="ex-desc">grow, bloom, harvest</span>
+        </button>
+        <button class="example-btn" data-ex="loops">
+          <span class="ex-icon">🔁</span>Loops
+          <span class="ex-desc">water, whilst, each</span>
+        </button>
+        <button class="example-btn" data-ex="conditions">
+          <span class="ex-icon">🤔</span>Conditions
+          <span class="ex-desc">when / otherwise</span>
+        </button>
+        <button class="example-btn" data-ex="functions">
+          <span class="ex-icon">🌿</span>Functions
+          <span class="ex-desc">plant, bear, call</span>
+        </button>
+        <button class="example-btn" data-ex="lists">
+          <span class="ex-icon">📋</span>Lists
+          <span class="ex-desc">bundles of things</span>
+        </button>
+        <button class="example-btn" data-ex="guessing">
+          <span class="ex-icon">🎲</span>Guessing Game
+          <span class="ex-desc">Full mini-game!</span>
+        </button>
+        <button class="example-btn" data-ex="fibonacci">
+          <span class="ex-icon">🐚</span>Fibonacci
+          <span class="ex-desc">Classic math sequence</span>
+        </button>
+      </nav>
+
+      <!-- editor -->
+      <div class="editor-pane">
+        <div class="pane-header">
+          <div class="dot" style="background: #3ddc84"></div>
+          Code Editor — write your Sprout here
+        </div>
+        <div class="editor-wrap">
+          <textarea
+            id="editor"
+            spellcheck="false"
+            autocomplete="off"
+            autocorrect="off"
+            placeholder='~ Start typing your Sprout code here...
+~ Example:
+bloom "Hello, World! 🌍"'
+          ></textarea>
+        </div>
+        <div class="kbd-bar">
+          <span><kbd>Ctrl</kbd>+<kbd>Enter</kbd> Run</span>
+          <span><kbd>Tab</kbd> Indent</span>
+          <span><kbd>Ctrl</kbd>+<kbd>L</kbd> Clear output</span>
+        </div>
+      </div>
+
+      <!-- output -->
+      <div class="output-pane">
+        <div class="pane-header">
+          <div class="dot" style="background: #f9c74f"></div>
+          Output
+        </div>
+        <div id="output">
+          <span class="output-empty"
+            >Output will appear here when you press Run ▶</span
+          >
+        </div>
+      </div>
+    </div>
+
+    <script>
+      /* ═══════════════════════════════════════════════════════════════════════════
+   SPROUT INTERPRETER — JavaScript implementation
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+      // ── Errors ───────────────────────────────────────────────────────────────────
+      class SproutError extends Error {
+        constructor(msg, line = 0) {
+          super(msg);
+          this.sproutMsg = msg;
+          this.line = line;
+        }
+      }
+      class SproutReturn {
+        constructor(v) {
+          this.value = v;
+        }
+      }
+      class SproutBreak {}
+      class SproutContinue {}
+
+
+      // ── Lexer ────────────────────────────────────────────────────────────────────
+      const KEYWORDS = {
+        bloom: "BLOOM",
+        grow: "GROW",
+        as: "AS",
+        harvest: "HARVEST",
+        with: "WITH",
+        when: "WHEN",
+        otherwise: "OTHERWISE",
+        whilst: "WHILST",
+        water: "WATER",
+        times: "TIMES",
+        plant: "PLANT",
+        bear: "BEAR",
+        and: "AND",
+        or: "OR",
+        not: "NOT",
+        true: "TRUE",
+        false: "FALSE",
+        each: "EACH",
+        in: "IN",
+        stop: "STOP",
+        skip: "SKIP",
+      };
+
+
+      class Token {
+        constructor(t, v, l) {
+          this.type = t;
+          this.value = v;
+          this.line = l;
+        }
+      }
+
+      class Lexer {
+        constructor(src) {
+          this.src = src;
+          this.pos = 0;
+          this.line = 1;
+        }
+        peek(o = 0) {
+          return this.src[this.pos + o];
+        }
+        adv() {
+          const c = this.src[this.pos++];
+          if (c === "\n") this.line++;
+          return c;
+        }
+        err(m) {
+          throw new SproutError("🌿 " + m, this.line);
+        }
+
+        tokenize() {
+          const toks = [];
+          while (this.pos < this.src.length) {
+            const c = this.peek();
+            if (c === " " || c === "\t" || c === "\r" || c === "\n") {
+              this.adv();
+              continue;
+            }
+            if (c === "~") {
+              while (this.pos < this.src.length && this.peek() !== "\n")
+                this.adv();
+              continue;
+            }
+            if (c === '"' || c === "'") {
+              toks.push(this.readStr(c));
+              continue;
+            }
+            if (c >= "0" && c <= "9") {
+              toks.push(this.readNum());
+              continue;
+            }
+            if (/[a-zA-Z_]/.test(c)) {
+              toks.push(this.readIdent());
+              continue;
+            }
+            toks.push(this.readSym());
+          }
+          toks.push(new Token("EOF", null, this.line));
+          return toks;
+        }
+
+        readStr(q) {
+          const line = this.line;
+          this.adv();
+          let s = "";
+          while (this.pos < this.src.length && this.peek() !== q) {
+            const c = this.adv();
+            if (c === "\\") {
+              const e = this.adv();
+              s += { n: "\n", t: "\t", "\\": "\\", '"': '"', "'": "'" }[e] || e;
+            } else s += c;
+          }
+          if (this.pos >= this.src.length)
+            this.err("String was never closed — missing closing quote?");
+          this.adv();
+          return new Token("STRING", s, line);
+        }
+
+        readNum() {
+          const line = this.line;
+          let s = "";
+          while (this.pos < this.src.length && /\d/.test(this.peek()))
+            s += this.adv();
+          if (this.pos < this.src.length && this.peek() === ".") {
+            s += this.adv();
+            while (this.pos < this.src.length && /\d/.test(this.peek()))
+              s += this.adv();
+            return new Token("NUMBER", parseFloat(s), line);
+          }
+          return new Token("NUMBER", parseInt(s, 10), line);
+        }
+
+        readIdent() {
+          const line = this.line;
+          let s = "";
+          while (this.pos < this.src.length && /[\w]/.test(this.peek()))
+            s += this.adv();
+          const t = KEYWORDS[s.toLowerCase()] || "IDENT";
+          return new Token(t, s, line);
+        }
+
+        readSym() {
+          const line = this.line;
+          const c = this.adv();
+          const n = this.peek();
+          const d = c + n;
+          const doubles = { "==": "EQ", "!=": "NEQ", "<=": "LTE", ">=": "GTE" };
+          if (doubles[d]) {
+            this.adv();
+            return new Token(doubles[d], d, line);
+          }
+          const singles = {
+            "+": "PLUS",
+            "-": "MINUS",
+            "*": "STAR",
+            "/": "SLASH",
+            "%": "PERCENT",
+            "<": "LT",
+            ">": "GT",
+            "=": "ASSIGN",
+            "{": "LBRACE",
+            "}": "RBRACE",
+            "[": "LBRACKET",
+            "]": "RBRACKET",
+            "(": "LPAREN",
+            ")": "RPAREN",
+            ",": "COMMA",
+          };
+          if (singles[c]) return new Token(singles[c], c, line);
+          this.err(`I don't recognise the character '${c}'`);
+        }
+      }
+
+      // ── AST helpers ───────────────────────────────────────────────────────────────
+      const N = (t, p) => ({ ...p, _t: t });
+
+      // ── Parser ────────────────────────────────────────────────────────────────────
+      class Parser {
+        constructor(toks) {
+          this.toks = toks;
+          this.pos = 0;
+        }
+        cur() {
+          return this.toks[this.pos];
+        }
+        peek(o = 1) {
+          return this.toks[Math.min(this.pos + o, this.toks.length - 1)];
+        }
+        adv() {
+          const t = this.toks[this.pos];
+          if (this.pos < this.toks.length - 1) this.pos++;
+          return t;
+        }
+        check(...tt) {
+          return tt.includes(this.cur().type);
+        }
+        match(...tt) {
+          if (this.check(...tt)) return this.adv();
+          return null;
+        }
+        expect(t, msg) {
+          if (this.cur().type === t) return this.adv();
+          throw new SproutError(
+            msg || `Expected ${t} but got '${this.cur().value}'`,
+            this.cur().line,
+          );
+        }
+
+        parse() {
+          const b = [];
+          while (!this.check("EOF")) b.push(this.stmt());
+          return N("Program", { body: b });
+        }
+
+        stmt() {
+          const t = this.cur();
+          if (t.type === "BLOOM") return this.bloom();
+          if (t.type === "GROW") return this.grow();
+          if (t.type === "HARVEST") return this.harvest();
+          if (t.type === "WHEN") return this.when_();
+          if (t.type === "WATER") return this.water();
+          if (t.type === "WHILST") return this.whilst();
+          if (t.type === "EACH") return this.each_();
+          if (t.type === "PLANT") return this.plant();
+          if (t.type === "BEAR") return this.bear();
+          if (t.type === "STOP") { const t = this.adv(); return N("StopStmt", { line: t.line }); }
+          if (t.type === "SKIP") { const t = this.adv(); return N("SkipStmt", { line: t.line }); }
+          if (t.type === "IDENT" && this.peek().type === "ASSIGN")
+            return this.assign();
+          return N("ExprStmt", { expr: this.expr(), line: t.line });
+
+        }
+
+        bloom() {
+          const t = this.adv();
+          return N("BloomStmt", { value: this.expr(), line: t.line });
+        }
+
+        grow() {
+          const t = this.adv();
+          const n = this.expect(
+            "IDENT",
+            "After 'grow' I need a name — e.g.  grow score as 0",
+          ).value;
+          this.expect(
+            "AS",
+            `After 'grow ${n}' I need 'as' — e.g.  grow ${n} as 0`,
+          );
+          return N("GrowStmt", { name: n, value: this.expr(), line: t.line });
+        }
+
+        assign() {
+          const t = this.adv();
+          this.adv();
+          return N("AssignStmt", {
+            name: t.value,
+            value: this.expr(),
+            line: t.line,
+          });
+        }
+
+        harvest() {
+          const t = this.adv();
+          const n = this.expect(
+            "IDENT",
+            "After 'harvest' I need a name — e.g.  harvest x with \"Prompt\"",
+          ).value;
+          this.expect("WITH");
+          return N("HarvestStmt", {
+            name: n,
+            prompt: this.expr(),
+            line: t.line,
+          });
+        }
+
+        when_() {
+          const t = this.adv();
+          const cond = this.expr();
+          const then = this.block();
+          let else_ = null;
+          if (this.match("OTHERWISE")) else_ = this.block();
+          return N("WhenStmt", {
+            condition: cond,
+            thenBlock: then,
+            elseBlock: else_,
+            line: t.line,
+          });
+        }
+
+        water() {
+          const t = this.adv();
+          const cnt = this.expr();
+          this.expect(
+            "TIMES",
+            "After 'water <number>' I need 'times' — e.g.  water 5 times { }",
+          );
+          return N("WaterStmt", {
+            count: cnt,
+            body: this.block(),
+            line: t.line,
+          });
+        }
+
+        whilst() {
+          const t = this.adv();
+          return N("WhilstStmt", {
+            condition: this.expr(),
+            body: this.block(),
+            line: t.line,
+          });
+        }
+
+        each_() {
+          const t = this.adv();
+          const v = this.expect(
+            "IDENT",
+            "After 'each' I need a name — e.g.  each item in colors { }",
+          ).value;
+          this.expect("IN", `After 'each ${v}' I need 'in'`);
+          return N("EachStmt", {
+            varName: v,
+            iterable: this.expr(),
+            body: this.block(),
+            line: t.line,
+          });
+        }
+
+        plant() {
+          const t = this.adv();
+          const n = this.expect(
+            "IDENT",
+            "After 'plant' I need a function name",
+          ).value;
+          const params = [];
+          if (this.match("WITH")) {
+            params.push(this.expect("IDENT").value);
+            while (this.match("AND")) params.push(this.expect("IDENT").value);
+          }
+          return N("PlantStmt", {
+            name: n,
+            params,
+            body: this.block(),
+            line: t.line,
+          });
+        }
+
+        bear() {
+          const t = this.adv();
+          return N("BearStmt", { value: this.expr(), line: t.line });
+        }
+
+        block() {
+          this.expect("LBRACE", "I was expecting '{' to start a block.");
+          const s = [];
+          while (!this.check("RBRACE") && !this.check("EOF"))
+            s.push(this.stmt());
+          this.expect("RBRACE", "I was expecting '}' to end the block.");
+          return s;
+        }
+
+        expr() {
+          return this.or();
+        }
+        or() {
+          let l = this.and();
+          while (this.check("OR")) {
+            const op = this.adv();
+            l = N("BinOp", {
+              left: l,
+              op: "or",
+              right: this.and(),
+              line: op.line,
+            });
+          }
+          return l;
+        }
+        and() {
+          let l = this.not_();
+          while (this.check("AND")) {
+            const op = this.adv();
+            l = N("BinOp", {
+              left: l,
+              op: "and",
+              right: this.not_(),
+              line: op.line,
+            });
+          }
+          return l;
+        }
+        not_() {
+          if (this.check("NOT")) {
+            const op = this.adv();
+            return N("UnaryOp", {
+              op: "not",
+              operand: this.not_(),
+              line: op.line,
+            });
+          }
+          return this.cmp();
+        }
+        cmp() {
+          let l = this.add();
+          const ops = {
+            EQ: "==",
+            NEQ: "!=",
+            LT: "<",
+            GT: ">",
+            LTE: "<=",
+            GTE: ">=",
+          };
+          while (ops[this.cur().type]) {
+            const op = this.adv();
+            l = N("BinOp", {
+              left: l,
+              op: ops[op.type],
+              right: this.add(),
+              line: op.line,
+            });
+          }
+          return l;
+        }
+        add() {
+          let l = this.mul();
+          while (this.check("PLUS", "MINUS")) {
+            const op = this.adv();
+            l = N("BinOp", {
+              left: l,
+              op: op.value,
+              right: this.mul(),
+              line: op.line,
+            });
+          }
+          return l;
+        }
+        mul() {
+          let l = this.unary();
+          while (this.check("STAR", "SLASH", "PERCENT")) {
+            const op = this.adv();
+            l = N("BinOp", {
+              left: l,
+              op: op.value,
+              right: this.unary(),
+              line: op.line,
+            });
+          }
+          return l;
+        }
+        unary() {
+          if (this.check("MINUS")) {
+            const op = this.adv();
+            return N("UnaryOp", {
+              op: "-",
+              operand: this.primary(),
+              line: op.line,
+            });
+          }
+          return this.primary();
+        }
+        primary() {
+          const t = this.cur();
+          let node = this.atom();
+          while (this.check("LBRACKET")) {
+            this.adv();
+            const idx = this.expr();
+            this.expect("RBRACKET");
+            node = N("IndexExpr", { obj: node, index: idx, line: t.line });
+          }
+          return node;
+        }
+
+        atom() {
+          const t = this.cur();
+          if (this.check("NUMBER")) {
+            this.adv();
+            return N("NumberLiteral", { value: t.value, line: t.line });
+          }
+          if (this.check("STRING")) {
+            this.adv();
+            return N("StringLiteral", { value: t.value, line: t.line });
+          }
+          if (this.check("TRUE")) {
+            this.adv();
+            return N("BoolLiteral", { value: true, line: t.line });
+          }
+          if (this.check("FALSE")) {
+            this.adv();
+            return N("BoolLiteral", { value: false, line: t.line });
+          }
+          if (this.check("LBRACKET")) {
+            this.adv();
+            const els = [];
+            if (!this.check("RBRACKET")) {
+              els.push(this.expr());
+              while (this.match("COMMA")) els.push(this.expr());
+            }
+            this.expect("RBRACKET");
+            return N("ListLiteral", { elements: els, line: t.line });
+          }
+          if (this.check("LPAREN")) {
+            this.adv();
+            const e = this.expr();
+            this.expect("RPAREN");
+            return e;
+          }
+          if (this.check("IDENT")) {
+            const n = this.adv();
+            if (this.check("LPAREN")) {
+              this.adv();
+              const args = [];
+              if (!this.check("RPAREN")) {
+                args.push(this.expr());
+                while (this.match("COMMA")) args.push(this.expr());
+              }
+              this.expect("RPAREN");
+              return N("FuncCall", { name: n.value, args, line: n.line });
+            }
+            return N("Identifier", { name: n.value, line: n.line });
+          }
+          throw new SproutError(
+            `🌿 I don't know what to do with '${t.value}' here.`,
+            t.line,
+          );
+        }
+      }
+
+      // ── Evaluator ─────────────────────────────────────────────────────────────────
+      class Env {
+        constructor(parent = null) {
+          this.vars = {};
+          this.parent = parent;
+        }
+        get(n, line = 0) {
+          if (n in this.vars) return this.vars[n];
+          if (this.parent) return this.parent.get(n, line);
+          throw new SproutError(
+            `🌿 I don't know what '${n}' is.\n   Hint: Use 'grow ${n} as ...' to create it first.`,
+            line,
+          );
+        }
+        set(n, v) {
+          this.vars[n] = v;
+        }
+        assign(n, v, line = 0) {
+          if (n in this.vars) {
+            this.vars[n] = v;
+            return;
+          }
+          if (this.parent) {
+            this.parent.assign(n, v, line);
+            return;
+          }
+          throw new SproutError(
+            `🌿 I don't know what '${n}' is.\n   Hint: 'grow ${n} as ...' to create it first.`,
+            line,
+          );
+        }
+      }
+
+      class SproutFunction {
+        constructor(n, p, b, c) {
+          this.name = n;
+          this.params = p;
+          this.body = b;
+          this.closure = c;
+        }
+      }
+
+      function fmt(v) {
+        if (v === true) return "true";
+        if (v === false) return "false";
+        if (v === null || v === undefined) return "";
+        if (Array.isArray(v)) return "[" + v.map(fmt).join(", ") + "]";
+        if (typeof v === "number" && Number.isInteger(v)) return String(v);
+        return String(v);
+      }
+
+      function truthy(v) {
+        return (
+          v !== null &&
+          v !== false &&
+          v !== 0 &&
+          v !== "" &&
+          !(Array.isArray(v) && v.length === 0)
+        );
+      }
+
+      class Interpreter {
+        constructor(out) {
+          this.out = out;
+          this.globals = new Env();
+          this._setupBuiltins();
+        }
+
+        _setupBuiltins() {
+          const G = this.globals;
+          G.set("length", ([v]) => {
+            if (Array.isArray(v) || typeof v === "string") return v.length;
+            throw new SproutError("🌿 'length' needs a string or list.");
+          });
+          G.set("random", ([a, b]) => {
+            if (a === undefined) return Math.random();
+            return Math.floor(Math.random() * (b - a + 1)) + a;
+          });
+          G.set("round", ([n, p = 0]) => {
+            const f = Math.pow(10, p);
+            return Math.round(n * f) / f;
+          });
+          G.set("floor", ([n]) => Math.floor(n));
+          G.set("ceil", ([n]) => Math.ceil(n));
+          G.set("abs", ([n]) => Math.abs(n));
+          G.set("max", ([...a]) => {
+            const lst = a.length === 1 && Array.isArray(a[0]) ? a[0] : a;
+            return Math.max(...lst);
+          });
+          G.set("min", ([...a]) => {
+            const lst = a.length === 1 && Array.isArray(a[0]) ? a[0] : a;
+            return Math.min(...lst);
+          });
+          G.set("sqrt", ([n]) => Math.sqrt(n));
+          G.set("pow", ([a, b]) => Math.pow(a, b));
+          G.set("type", ([v]) => {
+            if (typeof v === "boolean") return "boolean";
+            if (typeof v === "number") return "number";
+            if (typeof v === "string") return "string";
+            if (Array.isArray(v)) return "list";
+            if (typeof v === "function" || v instanceof SproutFunction) return "function";
+            return "unknown";
+          });
+          G.set("number", ([v]) => {
+
+            const n = Number(v);
+            if (isNaN(n))
+              throw new SproutError(`🌿 Can't turn '${v}' into a number.`);
+            return n;
+          });
+          G.set("text", ([v]) => fmt(v));
+          G.set("join", ([lst, sep = ""]) => {
+            if (!Array.isArray(lst))
+              throw new SproutError("🌿 'join' needs a list.");
+            return lst.map(fmt).join(sep);
+          });
+          G.set("uppercase", ([s]) => String(s).toUpperCase());
+          G.set("lowercase", ([s]) => String(s).toLowerCase());
+          G.set("split", ([s, sep = " "]) => String(s).split(sep));
+          G.set("contains", ([a, b]) =>
+            Array.isArray(a) ? a.includes(b) : String(a).includes(String(b)),
+          );
+          G.set("add", ([lst, item]) => {
+            if (!Array.isArray(lst))
+              throw new SproutError("🌿 'add' needs a list.");
+            lst.push(item);
+            return lst;
+          });
+          G.set("remove", ([lst, i]) => {
+            if (!Array.isArray(lst))
+              throw new SproutError("🌿 'remove' needs a list.");
+            lst.splice(i, 1);
+            return lst;
+          });
+          G.set("newline", () => {
+            this.out("");
+          });
+          G.set("pi", Math.PI);
+          G.set("e", Math.E);
+        }
+
+
+        run(prog) {
+          this.execBlock(prog.body, this.globals);
+        }
+
+        execBlock(stmts, env) {
+          for (const s of stmts) this.exec(s, env);
+        }
+
+        exec(node, env) {
+          switch (node._t) {
+            case "BloomStmt": {
+              this.out(fmt(this.eval(node.value, env)));
+              break;
+            }
+            case "GrowStmt": {
+              env.set(node.name, this.eval(node.value, env));
+              break;
+            }
+            case "AssignStmt": {
+              env.assign(node.name, this.eval(node.value, env), node.line);
+              break;
+            }
+            case "HarvestStmt": {
+              const prompt = fmt(this.eval(node.prompt, env));
+              const raw = window.prompt(prompt) || "";
+              const num = Number(raw);
+              env.set(node.name, raw !== "" && !isNaN(num) ? num : raw);
+              break;
+            }
+            case "WhenStmt": {
+              const b = truthy(this.eval(node.condition, env))
+                ? node.thenBlock
+                : node.elseBlock;
+              if (b) this.execBlock(b, new Env(env));
+              break;
+            }
+            case "WaterStmt": {
+              const n = this.eval(node.count, env);
+              for (let i = 0; i < n; i++) {
+                try {
+                  this.execBlock(node.body, new Env(env));
+                } catch (e) {
+                  if (e instanceof SproutBreak) break;
+                  if (e instanceof SproutContinue) continue;
+                  throw e;
+                }
+              }
+              break;
+            }
+            case "WhilstStmt": {
+              let guard = 0;
+              while (truthy(this.eval(node.condition, env))) {
+                if (++guard > 100000)
+                  throw new SproutError(
+                    "🌿 Loop ran too many times — did you forget to update a variable?",
+                  );
+                try {
+                  this.execBlock(node.body, new Env(env));
+                } catch (e) {
+                  if (e instanceof SproutBreak) break;
+                  if (e instanceof SproutContinue) continue;
+                  throw e;
+                }
+              }
+              break;
+            }
+            case "EachStmt": {
+              const lst = this.eval(node.iterable, env);
+              if (!Array.isArray(lst))
+                throw new SproutError("🌿 each...in needs a list.", node.line);
+              for (const item of lst) {
+                const inner = new Env(env);
+                inner.set(node.varName, item);
+                try {
+                  this.execBlock(node.body, inner);
+                } catch (e) {
+                  if (e instanceof SproutBreak) break;
+                  if (e instanceof SproutContinue) continue;
+                  throw e;
+                }
+              }
+              break;
+            }
+
+            case "PlantStmt": {
+              env.set(
+                node.name,
+                new SproutFunction(node.name, node.params, node.body, env),
+              );
+              break;
+            }
+            case "BearStmt":
+              throw new SproutReturn(this.eval(node.value, env));
+            case "StopStmt":
+              throw new SproutBreak();
+            case "SkipStmt":
+              throw new SproutContinue();
+            case "ExprStmt":
+              this.eval(node.expr, env);
+              break;
+
+          }
+        }
+
+        eval(node, env) {
+          switch (node._t) {
+            case "NumberLiteral":
+              return node.value;
+            case "StringLiteral":
+              return node.value;
+            case "BoolLiteral":
+              return node.value;
+            case "Identifier":
+              return env.get(node.name, node.line);
+            case "ListLiteral":
+              return node.elements.map((e) => this.eval(e, env));
+            case "IndexExpr": {
+              const obj = this.eval(node.obj, env),
+                idx = this.eval(node.index, env);
+              if (typeof obj === "string") {
+                if (typeof idx !== "number")
+                  throw new SproutError("🌿 The index must be a number.", node.line);
+                if (idx < 0 || idx >= obj.length)
+                  throw new SproutError(`🌿 Index ${idx} is out of range. The string has ${obj.length} character(s).`, node.line);
+                return obj[idx];
+              }
+              if (!Array.isArray(obj))
+                throw new SproutError(
+                  "🌿 You can only use [...] on a list or string.",
+                  node.line,
+                );
+              if (typeof idx !== "number")
+                throw new SproutError(
+                  "🌿 The index inside [...] must be a number.",
+                  node.line,
+                );
+              if (idx < 0 || idx >= obj.length)
+                throw new SproutError(
+                  `🌿 Index ${idx} is out of range. List has ${obj.length} item(s).`,
+                  node.line,
+                );
+              return obj[idx];
+            }
+
+            case "BinOp":
+              return this.binop(node, env);
+            case "UnaryOp": {
+              const v = this.eval(node.operand, env);
+              if (node.op === "-") return -v;
+              if (node.op === "not") return !truthy(v);
+              break;
+            }
+            case "FuncCall":
+              return this.call(node, env);
+          }
+          throw new SproutError("🌿 Unknown node: " + node._t);
+        }
+
+        binop(node, env) {
+          const op = node.op;
+          if (op === "and")
+            return (
+              truthy(this.eval(node.left, env)) &&
+              truthy(this.eval(node.right, env))
+            );
+          if (op === "or")
+            return (
+              truthy(this.eval(node.left, env)) ||
+              truthy(this.eval(node.right, env))
+            );
+          const l = this.eval(node.left, env),
+            r = this.eval(node.right, env);
+          switch (op) {
+            case "+":
+              return typeof l === "string" || typeof r === "string"
+                ? fmt(l) + fmt(r)
+                : l + r;
+            case "-":
+              return l - r;
+            case "*":
+              return l * r;
+            case "/":
+              if (r === 0)
+                throw new SproutError(
+                  "🌿 You can't divide by zero!",
+                  node.line,
+                );
+              return l / r;
+            case "%":
+              return l % r;
+            case "==":
+              return l === r;
+            case "!=":
+              return l !== r;
+            case "<":
+              return l < r;
+            case ">":
+              return l > r;
+            case "<=":
+              return l <= r;
+            case ">=":
+              return l >= r;
+          }
+          throw new SproutError("🌿 Unknown operator: " + op, node.line);
+        }
+
+        call(node, env) {
+          const fn = env.get(node.name, node.line);
+          const args = node.args.map((a) => this.eval(a, env));
+          if (typeof fn === "function") {
+            try {
+              return fn(args);
+            } catch (e) {
+              if (e instanceof SproutError) throw e;
+              throw new SproutError(
+                "🌿 Error in '" + node.name + "': " + e.message,
+                node.line,
+              );
+            }
+          }
+          if (fn instanceof SproutFunction) {
+            if (args.length !== fn.params.length)
+              throw new SproutError(
+                `🌿 '${fn.name}' expects ${fn.params.length} arg(s) but got ${args.length}.`,
+                node.line,
+              );
+            const fe = new Env(fn.closure);
+            fn.params.forEach((p, i) => fe.set(p, args[i]));
+            try {
+              this.execBlock(fn.body, fe);
+              return null;
+            } catch (e) {
+              if (e instanceof SproutReturn) return e.value;
+              throw e;
+            }
+          }
+          throw new SproutError(
+            `🌿 '${node.name}' is not something I can call.`,
+            node.line,
+          );
+        }
+      }
+
+      /* ═══════════════════════════════════════════════════════════════════════════
+   UI LOGIC
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+      const editor = document.getElementById("editor");
+      const output = document.getElementById("output");
+      const btnRun = document.getElementById("btnRun");
+      const btnClear = document.getElementById("btnClear");
+      const btnDownload = document.getElementById("btnDownload");
+
+
+      function runCode() {
+        output.innerHTML = "";
+        const source = editor.value;
+        if (!source.trim()) {
+          addLine("~ nothing to run — type some Sprout code first!", "sys");
+          return;
+        }
+        const lines = [];
+        try {
+          const toks = new Lexer(source).tokenize();
+          const tree = new Parser(toks).parse();
+          const interp = new Interpreter((line) => lines.push(line));
+          interp.run(tree);
+          if (lines.length === 0)
+            addLine("~ program finished with no output.", "sys");
+          else lines.forEach((l) => addLine(l, ""));
+        } catch (e) {
+          const msg = e.sproutMsg || e.message;
+          addLine(msg + (e.line ? `\n   (on line ${e.line})` : ""), "err");
+        }
+      }
+
+      function addLine(text, cls) {
+        const div = document.createElement("div");
+        div.className = "out-line" + (cls ? " " + cls : "");
+        div.textContent = text;
+        output.appendChild(div);
+        output.scrollTop = output.scrollHeight;
+      }
+
+      btnRun.addEventListener("click", runCode);
+      btnClear.addEventListener("click", () => {
+        output.innerHTML =
+          '<span class="output-empty">Output will appear here when you press Run ▶</span>';
+      });
+      btnDownload.addEventListener("click", () => {
+        const text = editor.value;
+        const blob = new Blob([text], { type: "text/plain" });
+        const a = document.createElement("a");
+        a.href = URL.createObjectURL(blob);
+        a.download = "my_program.sprout";
+        a.click();
+      });
+      editor.addEventListener("keydown", (e) => {
+
+        if (e.ctrlKey && e.key === "Enter") {
+          e.preventDefault();
+          runCode();
+        }
+        if (e.ctrlKey && e.key === "l") {
+          e.preventDefault();
+          btnClear.click();
+        }
+        if (e.key === "Tab") {
+          e.preventDefault();
+          const s = editor.selectionStart;
+          editor.setRangeText("  ", s, s, "end");
+        }
+      });
+
+      // ── examples ─────────────────────────────────────────────────────────────────
+      const EXAMPLES = {
+        hello: `~ Hello World 🌍
+bloom "Hello, World!"
+bloom ""
+harvest name with "What is your name? "
+bloom "Hello, " + name + "! 🌟 Nice to meet you!"`,
+
+        variables: `~ Variables in Sprout 📦
+grow score as 0
+grow name as "Alice"
+grow pi as 3.14159
+
+bloom "Name: " + name
+bloom "Score: " + score
+bloom "Pi is about: " + pi
+
+~ Change a variable (no 'grow' needed)
+score = score + 10
+bloom "New score: " + score`,
+
+        loops: `~ Loops in Sprout 🔁
+
+~ Repeat N times
+bloom "=== water (repeat) ==="
+water 5 times {
+    bloom "🌱 Growing..."
+}
+
+~ Whilst (while) loop
+bloom ""
+bloom "=== whilst (while) ==="
+grow x as 1
+whilst x <= 5 {
+    bloom "x is " + x
+    x = x + 1
+}
+
+~ Each (for-each) loop
+bloom ""
+bloom "=== each (for-each) ==="
+grow fruits as ["Apple", "Banana", "Mango", "Cherry"]
+each fruit in fruits {
+    bloom "🍎 " + fruit
+}`,
+
+        conditions: `~ Conditions in Sprout 🤔
+harvest age with "How old are you? "
+
+when age < 8 {
+    bloom "🐣 You are very young! Keep learning!"
+}
+when age >= 8 and age < 13 {
+    bloom "🌱 You are a kid — great age to start coding!"
+}
+when age >= 13 and age < 18 {
+    bloom "🌿 You are a teenager! The world is yours."
+}
+otherwise {
+    bloom "🌳 You are an adult. Welcome to Sprout!"
+}
+
+~ Boolean logic
+grow isRaining as true
+grow isCold as false
+
+when isRaining and isCold {
+    bloom "❄️ Stay inside!"
+} otherwise {
+    when isRaining {
+        bloom "☂️ Take an umbrella!"
+    } otherwise {
+        bloom "☀️ Beautiful day!"
+    }
+}`,
+
+        functions: `~ Functions in Sprout 🌿
+
+plant greet with name {
+    bloom "Hello, " + name + "! 👋"
+}
+
+plant add with a and b {
+    bear a + b
+}
+
+plant is_even with n {
+    bear n % 2 == 0
+}
+
+plant factorial with n {
+    when n <= 1 { bear 1 }
+    bear n * factorial(n - 1)
+}
+
+~ Call them!
+greet("Alice")
+greet("Bob")
+
+bloom "5 + 7 = " + add(5, 7)
+bloom "Is 4 even? " + is_even(4)
+bloom "Is 9 even? " + is_even(9)
+bloom "6! = " + factorial(6)`,
+
+        lists: `~ Lists in Sprout 📋
+
+grow colors as ["red", "green", "blue", "yellow"]
+
+bloom "First color: " + colors[0]
+bloom "Total colors: " + length(colors)
+
+~ Add & remove
+add(colors, "purple")
+bloom "After adding: " + join(colors, ", ")
+
+~ Loop through
+bloom ""
+each color in colors {
+    bloom "🎨 " + uppercase(color)
+}
+
+~ Useful list functions
+grow nums as [5, 2, 9, 1, 7]
+bloom ""
+bloom "Max: " + max(nums)
+bloom "Min: " + min(nums)`,
+
+        guessing: `~ 🎲 Number Guessing Game!
+bloom "🎲 I'm thinking of a number 1–20!"
+bloom ""
+grow secret as random(1, 20)
+grow tries as 0
+grow won as false
+
+whilst not won {
+    harvest guess with "Your guess: "
+    tries = tries + 1
+    when guess < secret { bloom "📉 Too low! Try higher." }
+    when guess > secret { bloom "📈 Too high! Try lower." }
+    when guess == secret { won = true }
+}
+
+bloom ""
+bloom "🎉 Correct! The number was " + secret + "."
+bloom "You took " + tries + " guess(es)!"`,
+
+        fibonacci: `~ 🐚 Fibonacci Sequence
+plant fib with n {
+    when n <= 1 { bear n }
+    bear fib(n - 1) + fib(n - 2)
+}
+
+bloom "First 10 Fibonacci numbers:"
+grow i as 0
+whilst i < 10 {
+    bloom "  fib(" + i + ") = " + fib(i)
+    i = i + 1
+}`,
+      };
+
+      document.querySelectorAll(".example-btn").forEach((btn) => {
+        btn.addEventListener("click", () => {
+          const key = btn.dataset.ex;
+          if (EXAMPLES[key]) {
+            editor.value = EXAMPLES[key];
+            output.innerHTML =
+              '<span class="output-empty">Press ▶ Run to see the output!</span>';
+          }
+        });
+      });
+
+      // load hello by default
+      editor.value = EXAMPLES.hello;
+    </script>
+  </body>
+</html>

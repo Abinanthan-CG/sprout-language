@@ -1,0 +1,41 @@
+~ ───────────────────────────────────────────────────
+~ functions.sprout  —  How to plant & use functions
+~ ───────────────────────────────────────────────────
+
+~ A function that adds two numbers
+plant add with a and b {
+    bear a + b
+}
+
+~ A function that greets someone
+plant greet with name {
+    bloom "Hello, " + name + "! 🌿"
+}
+
+~ A function that checks if a number is even
+plant is_even with n {
+    bear n % 2 == 0
+}
+
+~ ----- use them! -----
+greet("Alice")
+greet("Bob")
+
+grow result as add(10, 25)
+bloom "10 + 25 = " + result
+
+bloom ""
+bloom "Is 4 even? " + is_even(4)
+bloom "Is 7 even? " + is_even(7)
+
+~ Factorial using recursion
+plant factorial with n {
+    when n <= 1 {
+        bear 1
+    }
+    bear n * factorial(n - 1)
+}
+
+bloom ""
+bloom "5! = " + factorial(5)
+bloom "10! = " + factorial(10)

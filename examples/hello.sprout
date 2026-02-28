@@ -1,0 +1,15 @@
+~ ───────────────────────────────────────────────────
+~ hello.sprout  —  Your very first Sprout program! 🌱
+~ ───────────────────────────────────────────────────
+
+bloom "Hello, World! 🌍"
+bloom "Welcome to Sprout!"
+bloom ""
+
+~ Ask the user for their name
+harvest name with "What is your name? "
+bloom "Hello, " + name + "! 🌟 Great to meet you!"
+
+~ A little math
+grow age as 10
+bloom "In 5 years you will be " + (age + 5) + " years old."

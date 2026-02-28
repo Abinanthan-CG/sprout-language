@@ -1,0 +1,48 @@
+~ ───────────────────────────────────────────────────
+~ quiz.sprout  —  A fun general-knowledge quiz! 🧠
+~ ───────────────────────────────────────────────────
+
+bloom "🧠 Sprout Quiz Time! Answer 3 questions."
+bloom ""
+
+grow score as 0
+
+~ Question 1
+harvest a1 with "Q1: What is 7 x 8? "
+when number(a1) == 56 {
+    bloom "✅ Correct!"
+    score = score + 1
+} otherwise {
+    bloom "❌ Nope! The answer is 56."
+}
+
+~ Question 2
+harvest a2 with "Q2: What colour is the sky? (one word) "
+when lowercase(a2) == "blue" {
+    bloom "✅ Correct!"
+    score = score + 1
+} otherwise {
+    bloom "❌ The sky is blue!"
+}
+
+~ Question 3
+harvest a3 with "Q3: How many legs does a spider have? "
+when number(a3) == 8 {
+    bloom "✅ Correct!"
+    score = score + 1
+} otherwise {
+    bloom "❌ Spiders have 8 legs."
+}
+
+bloom ""
+bloom "🏆 You scored " + score + " out of 3!"
+
+when score == 3 {
+    bloom "🌟 Perfect score! You're a genius!"
+}
+when score == 2 {
+    bloom "👍 Great job! Almost perfect!"
+}
+when score < 2 {
+    bloom "🌱 Keep learning — you'll get there!"
+}
