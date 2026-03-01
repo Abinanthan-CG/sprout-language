@@ -316,8 +316,13 @@
     <div class="main">
       <!-- sidebar -->
       <nav class="sidebar">
-        <div class="sidebar-title">📂 Examples</div>
+        <div id="userFilesContainer">
+          <div class="sidebar-title">� My Files</div>
+          <div id="userFilesList"></div>
+        </div>
+        <div class="sidebar-title" style="border-top: 1px solid var(--border);">�📂 Examples</div>
         <button class="example-btn" data-ex="hello">
+
           <span class="ex-icon">👋</span>Hello World
           <span class="ex-desc">Your first Sprout program</span>
         </button>
@@ -1321,9 +1326,51 @@ bloom "Hello, World! 🌍"'
       const btnDownload = document.getElementById("btnDownload");
       const btnNew = document.getElementById("btnNew");
 
+      let userFiles = [];
+      let currentFileId = null;
+      let nextFileId = 1;
+      const userFilesList = document.getElementById("userFilesList");
 
+      function renderUserFiles() {
+        userFilesList.innerHTML = "";
+        userFiles.forEach(f => {
+           const btn = document.createElement("button");
+           btn.className = "example-btn";
+           if (f.id === currentFileId) {
+             btn.style.background = "var(--bg3)";
+             btn.style.color = "var(--green)";
+           }
+           btn.innerHTML = `<span class="ex-icon">📄</span>${f.name}`;
+           btn.onclick = () => switchFile(f.id);
+           userFilesList.appendChild(btn);
+        });
+      }
+
+      function switchFile(id) {
+        if (currentFileId !== null) {
+          const f = userFiles.find(x => x.id === currentFileId);
+          if (f) f.content = editor.value;
+        }
+        currentFileId = id;
+        if (id !== null) {
+          const f = userFiles.find(x => x.id === id);
+          if (f) {
+             editor.value = f.content;
+             output.innerHTML = '<span class="output-empty">Press ▶ Run to see the output!</span>';
+          }
+        }
+        renderUserFiles();
+      }
+
+      editor.addEventListener("input", () => {
+         if (currentFileId !== null) {
+            const f = userFiles.find(x => x.id === currentFileId);
+            if (f) f.content = editor.value;
+         }
+      });
 
       function runCode() {
+
         output.innerHTML = "";
         const source = editor.value;
         if (!source.trim()) {
@@ -1359,13 +1406,18 @@ bloom "Hello, World! 🌍"'
           '<span class="output-empty">Output will appear here when you press Run ▶</span>';
       });
       btnNew.addEventListener("click", () => {
-        if(editor.value.trim() !== "" && !confirm("Are you sure you want to start a new file? This will clear your current code.")) {
-            return;
+        if (currentFileId !== null) {
+           const f = userFiles.find(x => x.id === currentFileId);
+           if (f) f.content = editor.value;
         }
-        editor.value = "";
-        output.innerHTML = '<span class="output-empty">Output will appear here when you press Run ▶</span>';
+        let name = prompt("Enter a name for your new file:", `script_${nextFileId}.sprout`);
+        if (!name) return;
+        const newFile = { id: nextFileId++, name, content: "" };
+        userFiles.push(newFile);
+        switchFile(newFile.id);
         editor.focus();
       });
+
       btnDownload.addEventListener("click", () => {
 
         const text = editor.value;
@@ -1553,15 +1605,23 @@ whilst i < 10 {
       };
 
       document.querySelectorAll(".example-btn").forEach((btn) => {
+        if (!btn.dataset.ex) return;
         btn.addEventListener("click", () => {
           const key = btn.dataset.ex;
           if (EXAMPLES[key]) {
+            if (currentFileId !== null) {
+              const f = userFiles.find(x => x.id === currentFileId);
+              if (f) f.content = editor.value;
+              currentFileId = null;
+              renderUserFiles();
+            }
             editor.value = EXAMPLES[key];
             output.innerHTML =
               '<span class="output-empty">Press ▶ Run to see the output!</span>';
           }
         });
       });
+
 
       // load hello by default
       editor.value = EXAMPLES.hello;
